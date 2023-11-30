@@ -4,6 +4,7 @@ Searchable contact book made in Python using a trie data structure.
 ## Introduction
 ## Authors
 Parker Young
+
 Jakson Kimball
 ## Acknowledgments
 - [Trie | (Insert and Search)](https://www.geeksforgeeks.org/trie-insert-and-search/)

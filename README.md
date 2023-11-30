@@ -1,6 +1,9 @@
 # ContactBook
 Searchable contact book made in Python using a trie data structure.
 ## Table of Contents
+* [Introduction](#introduction)
+* [Authors](#authors)
+* [Acknoledgments](#acknowledgments)
 ## Introduction
 ## Authors
 Parker Young\

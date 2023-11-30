@@ -3,8 +3,7 @@ Searchable contact book made in Python using a trie data structure.
 ## Table of Contents
 ## Introduction
 ## Authors
-Parker Young
-
+Parker Young\
 Jakson Kimball
 ## Acknowledgments
 - [Trie | (Insert and Search)](https://www.geeksforgeeks.org/trie-insert-and-search/)

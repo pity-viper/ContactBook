@@ -1,4 +1,4 @@
-class contact:
+class Contact:
     def __init__(self, firstN, lastN, phoneN, addres = ""):
         self.firstName = firstN
         self.lastName = lastN
@@ -11,5 +11,15 @@ class contact:
         else:
             print(self.firstName + self.lastName + ", " + self.phoneNumber + ", Address: " + self.address)
 
-class contactBook:
-    def __init__
+class ContactBook:
+    def __init__(self):
+        self.root = self.getNode()
+
+    def getNode(self):
+        return ContactNode()
+
+
+
+class ContactNode:
+    def __init__(self):
+        pass

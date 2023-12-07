@@ -3,7 +3,7 @@ Searchable contact book made in Python using a trie data structure.
 ## Table of Contents
 * [Introduction](#introduction)
 * [Authors](#authors)
-* [Acknoledgments](#acknowledgments)
+* [Acknowledgments](#acknowledgments)
 ## Introduction
 ## Authors
 Parker Young\

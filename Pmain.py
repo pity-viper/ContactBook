@@ -10,9 +10,9 @@ class Contact:
 
     def toString(self):
         if self.address == "":
-            print(self.firstName + self.lastName + ", " + self.phoneNumber)
+            print(self.firstName + " " + self.lastName + ", " + self.phoneNumber)
         else:
-            print(self.firstName + self.lastName + ", " + self.phoneNumber + ", Address: " + self.address)
+            print(self.firstName + " " + self.lastName + ", " + self.phoneNumber + ", Address: " + self.address)
 
 
 class ContactNode:
@@ -64,4 +64,4 @@ class ContactBook:
 
     def getContacts(self) -> list:
         pass
-        # like a toString method, but instead interates through the trie to get all the contacts
+        # like a toString method, but instead iterates through the trie to get all the contacts

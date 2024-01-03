@@ -9,14 +9,29 @@ class Contact:
     def __init__(self, firstN, lastN, phoneN, address = ""):
         self.firstName = firstN
         self.lastName = lastN
-        self.phoneNumber = phoneN
+        self.phoneNumber = processNum(phoneN)
         self.address = address
 
+    def processNum(self, number):
+        return re.findall("\d", txt)
+
     def toString(self) -> None:
+        tempNum = list(self.phoneNumber)
+        countryCode = ""
+        while len(tempNum) > 10:
+            countryCode += num.pop(0)
+
+        first = "".join(str(element) for element in tempNum[0:3])
+        second = "".join(str(element) for element in tempNum[3:6])
+        third = "".join(str(element) for element in tempNum[6:10])
+
+        num = ("+" + countryCode + " (" + first + ") " + second + "-" + third)
+
+
         if self.address == "":
-            return (self.firstName + " " + self.lastName + ", " + self.phoneNumber)
+            return (self.firstName + " " + self.lastName + ", " + num)
         else:
-            return (self.firstName + " " + self.lastName + ", " + self.phoneNumber + ", Address: " + self.address)
+            return (self.firstName + " " + self.lastName + ", " + num + ", Address: " + self.address)
 
 
 contactList = []

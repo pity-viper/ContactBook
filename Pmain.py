@@ -19,9 +19,9 @@ class ContactNode:
     def __init__(self):
         #self.children = {k:None for k in string.ascii_lowercase}
         self.children = {}
-        self.endWord = False
+        self.endWordNum = False
         self.leafNode = False
-        self.endNumber = False
+        #self.endNumber = False
         self.contacts = []
 
 
@@ -31,33 +31,41 @@ class ContactBook:
         self.root = ContactNode()
 
     def insert(self, contact: Contact) -> None:
-        self.__insertName(contact.firstName)
-        self.__insertName(contact.lastName)
-        self.__insertPhoneNumber(contact.phoneNumber)
+        self.__insertHelper(contact.firstName, contact)
+        self.__insertHelper(contact.lastName, contact)
+        self.__insertHelper(contact.phoneNumber, contact)
 
-    def __insertName(self, name: string) -> None:
+    def __insertHelper(self, wordNum: string, contact: Contact) -> None:
         current = self.root
-        for letter in name:
-            if not current.children.get(letter):
-                current.children[letter] = ContactNode()
-            current = current.children[letter]
-        current.endWord = True
-        current.leafNode = True # add logic to flip this off if another node is added after it
-        # need to add the contact to contacts list in node
-
-    def __insertPhoneNumber(self, phoneNumber: string) -> None:
-        current = self.root
-        for number in phoneNumber:
-            if not current.children.get(number):
-                current.children[number] = ContactNode()
-            current = current.children[number]
-        current.endNumber = True
+        for char in wordNum:
+            if not current.children.get(char):
+                current.children[char] = ContactNode()
+                if current.leafNode:
+                    current.leafNode = False
+            current = current.children[char]
+        current.endWordNum = True
         current.leafNode = True
-        # need to add the contact to the contacts list in node
-        # need to make sure that this doesn't conflict with the name trie. Either have 2 tries or all in one somehow
+        current.contacts.append(contact)
 
-    def search(self, contact: Contact) -> list:
-        pass
+    def search(self, wordNum: string) -> list:
+        results = []
+        current = self.root
+        for char in wordNum:
+            if not current.children.get(char):
+                break
+            current = current.children[char]
+        results.append(self.__getChildren(current))
+        return results
+
+
+    def __getChildren(self, current: ContactNode) -> list:
+        temp = []
+        for node in current.children.values():
+            if node.endWordNum:
+                temp.append(node.contacts)
+            if len(node.children) > 0:
+                temp.append(self.__getChildren(node))
+        return temp
 
     def delete(self, contact: Contact) -> None:
         pass

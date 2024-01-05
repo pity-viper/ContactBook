@@ -16,17 +16,29 @@ class Contact:
 
 
 class ContactNode:
+    """
+    Node object in a prefix tree
+
+    Attributes:
+        children (dict): maps letters to a list of ContactNodes
+        endWordNum (bool): if this node is the end of a word or phone number
+        leafNode (bool): if this is the last node in the chain
+        contacts (list): all Contacts associated with this node
+    """
     def __init__(self):
-        #self.children = {k:None for k in string.ascii_lowercase}
         self.children = {}
         self.endWordNum = False
         self.leafNode = False
-        #self.endNumber = False
         self.contacts = []
 
 
 class ContactBook:
-    # Trie data structure
+    """
+    Prefix Tree data structure that stores Contacts using ContactNodes
+
+    Attributes:
+        root (ContactNode): the root node of the prefix tree
+    """
     def __init__(self):
         self.root = ContactNode()
 
@@ -57,7 +69,6 @@ class ContactBook:
         results.append(self.__getChildren(current))
         return results
 
-
     def __getChildren(self, current: ContactNode) -> list:
         temp = []
         for node in current.children.values():
@@ -68,8 +79,12 @@ class ContactBook:
         return temp
 
     def delete(self, contact: Contact) -> None:
+        current = self.root
+        # call helper for first name, last name, and phone number
+
+    def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
         pass
+        # find the node that matches the string, then delete given contact from its list
 
     def getContacts(self) -> list:
-        pass
-        # like a toString method, but instead iterates through the trie to get all the contacts
+        return self.__getChildren(self.root)

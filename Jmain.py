@@ -1,5 +1,6 @@
 
 import csv
+import re
 
 examples = []
 
@@ -9,7 +10,7 @@ class Contact:
     def __init__(self, firstN, lastN, phoneN, address = ""):
         self.firstName = firstN
         self.lastName = lastN
-        self.phoneNumber = processNum(phoneN)
+        self.phoneNumber = self.processNum(phoneN)
         self.address = address
 
     def processNum(self, number):

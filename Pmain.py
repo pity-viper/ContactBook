@@ -79,12 +79,18 @@ class ContactBook:
         return temp
 
     def delete(self, contact: Contact) -> None:
-        current = self.root
-        # call helper for first name, last name, and phone number
+        self.__deleteHelper(contact.firstName, contact)
+        self.__deleteHelper(contact.lastName, contact)
+        self.__deleteHelper(contact.phoneNumber, contact)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
-        pass
-        # find the node that matches the string, then delete given contact from its list
+        current = self.root
+        for char in wordNum:
+            if not current.children.get(char):
+                break
+            current = current.children[char]
+        if current.endWordNum:
+            current.contacts.remove(contact)
 
     def getContacts(self) -> list:
         return self.__getChildren(self.root)

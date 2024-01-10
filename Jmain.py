@@ -74,15 +74,17 @@ os.system('')
 
 
 
-def input_search(list):
+def input_search():
     os.system('cls')
     go_to_X2 = "\033[G"
-
+    search = ""
     temp = "press enter when you find the contact your looking for: "
     choice = "".encode('ascii')
 
     while(choice != b'\r'):
         temp += choice.decode('ascii')
+        search += choice.decode('ascii')
+
         print(temp)
         vert = 1
         for i in range(len(list)):
@@ -95,6 +97,7 @@ def input_search(list):
         # Read one character from STD input (getch = "Get char")
         # If you are on linux, then use getch.getch()
         choice = (msvcrt.getch())
+        os.system('cls')
         print(go_to_X2, end="")
     os.system('cls')
 

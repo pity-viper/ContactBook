@@ -15,7 +15,7 @@ class Contact:
 
 
 
-    def toString(self) -> None:
+    def toString(self) -> string:
         tempNum = list(self.phoneNumber)
         countryCode = ""
         while len(tempNum) > 10:
@@ -48,7 +48,8 @@ def contactData() -> None:
             myStr = 'contact{}'.format(i + 1)
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
-            contactList.append(myVars['contact{}'.format(i + 1)])
+            #contactList.append(myVars['contact{}'.format(i + 1)])
+            CB.insert(myVars['contact{}'.format(i + 1)])
 
 
 class ContactNode:
@@ -109,9 +110,9 @@ class ContactBook:
         temp = []
         for node in current.children.values():
             if node.endWordNum:
-                temp.append(node.contacts)
+                temp.extend(node.contacts)
             if len(node.children) > 0:
-                temp.append(self.__getChildren(node))
+                temp.extend(self.__getChildren(node))
         return temp
 
     def delete(self, contact: Contact) -> None:
@@ -133,21 +134,26 @@ class ContactBook:
 
 
 os.system('')
-def input_search():
+
+
+def inputSearch():
     os.system('cls')
     go_to_X2 = "\033[G"
-    search = ""
+    userSearch = ""
     temp = "press enter when you find the contact your looking for: "
     choice = "".encode('ascii')
 
     while(choice != b'\r'):
         temp += choice.decode('ascii')
-        search += choice.decode('ascii')
-
+        userSearch += choice.decode('ascii')
+        results = CB.search(userSearch)
         print(temp)
         vert = 1
-        for i in range(len(list)):
-            print(list[i].toString())
+        print(type(results))
+        for contact in results:
+            print(type(contact))
+            print(contact)
+            print(contact.toString())
             vert += 1
         hori = len(temp)
         go_to_X = f"\033[{vert}A" + f"\033[{hori}G"
@@ -159,5 +165,10 @@ def input_search():
         os.system('cls')
         print(go_to_X2, end="")
     os.system('cls')
+
+
+CB = ContactBook()
+contactData()
+inputSearch()
 
 

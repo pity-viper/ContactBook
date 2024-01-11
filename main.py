@@ -28,13 +28,16 @@ class Contact:
         if(countryCode == ""):
             countryCode = "1"
 
-        num = ("+" + countryCode + "(" + first + ") " + second + "-" + third)
+        #num = ("+" + countryCode + "(" + first + ") " + second + "-" + third)
+        num = f"+{countryCode}({first}) {second}-{third}"
 
 
         if self.address == "":
-            return (self.firstName + " " + self.lastName + ", " + num)
+            #return (self.firstName + " " + self.lastName + ", " + num)
+            return f"{self.firstName} {self.lastName}, {num}"
         else:
-            return (self.firstName + " " + self.lastName + ", " + num + ", Address: " + self.address)
+            #return (self.firstName + " " + self.lastName + ", " + num + ", Address: " + self.address)
+            return f"{self.firstName} {self.lastName}, {num}, Address: {self.address}"
 
 
 contactList = []
@@ -103,11 +106,13 @@ class ContactBook:
             if not current.children.get(char):
                 break
             current = current.children[char]
-        results.append(self.__getChildren(current))
+        results.extend(self.__getChildren(current))
         return results
 
     def __getChildren(self, current: ContactNode) -> list:
         temp = []
+        if current.endWordNum:
+            temp.extend(current.contacts)
         for node in current.children.values():
             if node.endWordNum:
                 temp.extend(node.contacts)
@@ -151,8 +156,8 @@ def inputSearch():
         vert = 1
         print(type(results))
         for contact in results:
-            print(type(contact))
-            print(contact)
+            #print(type(contact))
+            #print(contact)
             print(contact.toString())
             vert += 1
         hori = len(temp)

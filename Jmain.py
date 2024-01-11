@@ -10,8 +10,8 @@ os.system('cls')
 
 class Contact:
     def __init__(self, firstN, lastN, phoneN, address = ""):
-        self.firstName = firstN
-        self.lastName = lastN
+        self.firstName = firstN.lower()
+        self.lastName = lastN.lower()
         self.phoneNumber = re.findall("\d", phoneN)
         self.address = address
 
@@ -32,11 +32,12 @@ class Contact:
 
         num = ("+" + countryCode + "(" + first + ") " + second + "-" + third)
 
-
+        firName = self.firstName.capitalize()
+        lName = self.lastName.capitalize()
         if self.address == "":
-            return (self.firstName + " " + self.lastName + ", " + num)
+            return (firName + " " + lName + ", " + num)
         else:
-            return (self.firstName + " " + self.lastName + ", " + num + ", Address: " + self.address)
+            return (firName + " " + lName + ", " + num + ", Address: " + self.address)
 
 
 contactList = []
@@ -68,13 +69,11 @@ for i in range(0, 10):
 # Make sure that ANSI codes work
 os.system('')
 
-# We will move 1 line up and to the 32nd column
 
 
 
 
-
-def input_search():
+def input_search(list):
     os.system('cls')
     go_to_X2 = "\033[G"
     search = ""
@@ -82,9 +81,13 @@ def input_search():
     choice = "".encode('ascii')
 
     while(choice != b'\r'):
-        temp += choice.decode('ascii')
-        search += choice.decode('ascii')
-
+        if choice == b'\x08':
+            temp = temp[:-1]
+            search = search[:-1]
+        else:
+            temp += choice.decode('ascii')
+            search += choice.decode('ascii')
+        print(search)
         print(temp)
         vert = 1
         for i in range(len(list)):

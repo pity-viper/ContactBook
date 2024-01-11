@@ -49,6 +49,8 @@ def contactData() -> None:
             tempName = row[0].split("  ")
             tempFname = tempName[1]
             tempLname = tempName[0]
+            if tempLname == "null":
+                tempLname = ""
             myStr = 'contact{}'.format(i + 1)
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
@@ -88,8 +90,12 @@ class ContactBook:
         self.__insertHelper(contact.lastName, contact)
         self.__insertHelper(contact.phoneNumber, contact)
         if save:
+            if contact.lastName == "":
+                lName = "null"
+            else:
+                lName = contact.lastName
             with open('contactExp.csv', 'w') as file:
-                file.write(f"{contact.lastName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
+                file.write(f"{lName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
                 file.write('n')
 
     def __insertHelper(self, wordNum: string, contact: Contact) -> None:
@@ -162,6 +168,7 @@ def inputSearch():
             userSearch += choice.decode('ascii')
         results = CB.search(userSearch)
         print(temp)
+        hori = len(temp)
         vert = 1
         print(type(results))
         for contact in results:
@@ -169,7 +176,6 @@ def inputSearch():
             #print(contact)
             print(contact.toString())
             vert += 1
-        hori = len(temp)
         go_to_X = f"\033[{vert}A" + f"\033[{hori}G"
         print(go_to_X, end="")
 
@@ -180,9 +186,107 @@ def inputSearch():
         print(go_to_X2, end="")
     os.system('cls')
 
+def userInput():
+    user = b'X'
+    FIRSTNAME = ""
+    LASTNAME = ""
+    PHONENUMBER = ""
+    ADDRESS = ""
+    while user != b'5':
+        go_to_X = f"\033[A" + f"\033[74G"
+        go_to_X2 = "\033[6A \033[G"
+
+        print("╒══════════════════════════════════════════════════════════════════════════╕\n"
+            + "│                                     Insert                               │\n"
+            + "╞══════════════╤═══════════════╤══════════════════╤═════════════╤══════════╡\n"
+            + "│1 - First Name│ 2 - Last Name │ 3 - Phone Number │ 4 - Address │ 5 - Exit │\n"
+            + "╞══════════════╧═══════════════╧══════════════════╧═════════════╧══════╤═══╡\n"
+           + f"│ Enter your choice here -->                                           │ {user.decode('ascii')} │\n"
+            + "╘══════════════════════════════════════════════════════════════════════╧═══╛" + go_to_X, end="")
+
+        user = (msvcrt.getche())
+        print(go_to_X2, end="")
+
+        if user == b'1':
+            FIRSTNAME = firstName()
+
+        if user == b'2':
+            LASTNAME = lastName()
+
+
+def firstName():
+    os.system('cls')
+    hori = 3
+    name = ''
+    choice = b''
+    spacing = "                                              "
+    while choice != b'\r':
+        go_to_X = "\033[A" + f"\033[{hori}G"
+        go_to_X2 = "\033[6A \033[G"
+        if choice == b'\x08':
+            name = name[:-1]
+            spacing += " "
+            hori -= 1
+        else:
+            name += choice.decode('ascii')
+            spacing = spacing[:-1]
+            hori += 1
+
+        print("╒═══════════════════════════════════════════════╕\n"
+            + "│               Input First Name                │\n"
+            + "╞═══════════════════════════════════════════════╡\n"
+           + f"│ {name} {spacing}│\n"
+            + "╘═══════════════════════════════════════════════╛" + go_to_X, end="")
+        choice = (msvcrt.getche())
+        print(go_to_X2, end="")
+        return name
+
+def lastName():
+    os.system('cls')
+    hori = 3
+    name = ''
+    choice = b''
+    spacing = "                                              "
+    while choice != b'\r':
+        go_to_X = "\033[A" + f"\033[{hori}G"
+        go_to_X2 = "\033[6A \033[G"
+        if choice == b'\x08':
+            name = name[:-1]
+            spacing += " "
+            hori -= 1
+        else:
+            name += choice.decode('ascii')
+            spacing = spacing[:-1]
+            hori += 1
+
+        print("╒═══════════════════════════════════════════════╕\n"
+            + "│               Input Last Name                 │\n"
+            + "╞═══════════════════════════════════════════════╡\n"
+           + f"│ {name} {spacing}│\n"
+            + "╘═══════════════════════════════════════════════╛" + go_to_X, end="")
+        choice = (msvcrt.getche())
+        print(go_to_X2, end="")
+        return name
+
+
+def main():
+    os.system('cls')
+    user = b'X'
+    while user != b'4':
+        go_to_X = "\033[F" + "\033[47G"
+        go_to_X2 = "\033[5A \033[G"
+
+        print("╒══════════╤════════════╤════════════╤══════════╕\n"
+            + "│1 - Insert│ 2 - Delete │ 3 - Search │ 4 - Exit │\n"
+            + "╞══════════╧════════════╧════════════╧══════╤═══╡\n"
+           + f"│ Enter your choice here -->                │ {user.decode('ascii')} │\n"
+            + "╘═══════════════════════════════════════════╧═══╛" + go_to_X, end="")
+        user =  msvcrt.getche()
+        print(go_to_X2, end='')
+
+        if user == b'1':
+            userInput()
+            os.system('cls')
 
 CB = ContactBook()
-contactData()
-inputSearch()
-
-
+main()

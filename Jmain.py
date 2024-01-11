@@ -48,6 +48,8 @@ def contactData() -> None:
             tempName = row[0].split("  ")
             tempFname = tempName[1]
             tempLname = tempName[0]
+            if tempLname == "null":
+                tempLname = ""
             myStr = 'contact{}'.format(i + 1)
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
@@ -89,11 +91,11 @@ def input_search(list):
             search += choice.decode('ascii')
         print(search)
         print(temp)
+        hori = len(temp)
         vert = 1
         for i in range(len(list)):
             print(list[i].toString())
             vert += 1
-        hori = len(temp)
         go_to_X = f"\033[{vert}A" + f"\033[{hori}G"
         print(go_to_X, end="")
 
@@ -104,4 +106,5 @@ def input_search(list):
         print(go_to_X2, end="")
     os.system('cls')
 
-input_search(tempList)
+def main():
+    user = ""

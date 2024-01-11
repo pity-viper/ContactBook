@@ -213,6 +213,11 @@ def userInput():
         if user == b'2':
             LASTNAME = lastName()
 
+        if user == b'3':
+            PHONENUMBER = phoneNumber()
+        if user == b'4':
+            ADDRESS = inputAddress()
+
 
 def firstName():
     os.system('cls')
@@ -239,7 +244,7 @@ def firstName():
             + "╘═══════════════════════════════════════════════╛" + go_to_X, end="")
         choice = (msvcrt.getche())
         print(go_to_X2, end="")
-        return name
+    return name
 
 def lastName():
     os.system('cls')
@@ -266,7 +271,61 @@ def lastName():
             + "╘═══════════════════════════════════════════════╛" + go_to_X, end="")
         choice = (msvcrt.getche())
         print(go_to_X2, end="")
-        return name
+    return name
+
+def phoneNumber():
+    os.system('cls')
+    hori = 3
+    number = ''
+    choice = b''
+    spacing = "                                                 "
+    while choice != b'\r':
+        go_to_X = "\033[A" + f"\033[{hori}G"
+        go_to_X2 = "\033[6A \033[G"
+        if choice == b'\x08':
+            number = number[:-1]
+            spacing += " "
+            hori -= 1
+        else:
+            number += choice.decode('ascii')
+            spacing = spacing[:-1]
+            hori += 1
+
+        print("╒══════════════════════════════════════════════════╕\n"
+            + "│               Input Phone Number                 │\n"
+            + "╞══════════════════════════════════════════════════╡\n"
+           + f"│ {number} {spacing}│\n"
+            + "╘══════════════════════════════════════════════════╛" + go_to_X, end="")
+        choice = (msvcrt.getche())
+        print(go_to_X2, end="")
+    return number
+
+def inputAddress():
+    os.system('cls')
+    hori = 3
+    address = ''
+    choice = b''
+    spacing = "                                                 "
+    while choice != b'\r':
+        go_to_X = "\033[A" + f"\033[{hori}G"
+        go_to_X2 = "\033[6A \033[G"
+        if choice == b'\x08':
+            address = address[:-1]
+            spacing += " "
+            hori -= 1
+        else:
+            address += choice.decode('ascii')
+            spacing = spacing[:-1]
+            hori += 1
+
+        print("╒══════════════════════════════════════════════════╕\n"
+            + "│               Input Address                      │\n"
+            + "╞══════════════════════════════════════════════════╡\n"
+           + f"│ {address} {spacing}│\n"
+            + "╘══════════════════════════════════════════════════╛" + go_to_X, end="")
+        choice = (msvcrt.getche())
+        print(go_to_X2, end="")
+    return address
 
 
 def main():

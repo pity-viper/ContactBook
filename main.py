@@ -8,8 +8,8 @@ import msvcrt
 
 class Contact:
     def __init__(self, firstN, lastN, phoneN, address = ""):
-        self.firstName = firstN
-        self.lastName = lastN
+        self.firstName = firstN.lower()
+        self.lastName = lastN.lower()
         self.phoneNumber = re.findall("\d", phoneN)
         self.address = address
 
@@ -31,13 +31,14 @@ class Contact:
         #num = ("+" + countryCode + "(" + first + ") " + second + "-" + third)
         num = f"+{countryCode}({first}) {second}-{third}"
 
-
+        fName = self.firstName.capitalize()
+        lName = self.lastName.capitalize()
         if self.address == "":
             #return (self.firstName + " " + self.lastName + ", " + num)
-            return f"{self.firstName} {self.lastName}, {num}"
+            return f"{fName} {lName}, {num}"
         else:
             #return (self.firstName + " " + self.lastName + ", " + num + ", Address: " + self.address)
-            return f"{self.firstName} {self.lastName}, {num}, Address: {self.address}"
+            return f"{fName} {lName}, {num}, Address: {self.address}"
 
 
 contactList = []
@@ -149,8 +150,12 @@ def inputSearch():
     choice = "".encode('ascii')
 
     while(choice != b'\r'):
-        temp += choice.decode('ascii')
-        userSearch += choice.decode('ascii')
+        if choice == b'\x08':
+            temp = temp[:-1]
+            userSearch = userSearch[:-1]
+        else:
+            temp += choice.decode('ascii')
+            userSearch += choice.decode('ascii')
         results = CB.search(userSearch)
         print(temp)
         vert = 1

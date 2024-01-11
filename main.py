@@ -83,10 +83,14 @@ class ContactBook:
     def __init__(self):
         self.root = ContactNode()
 
-    def insert(self, contact: Contact) -> None:
+    def insert(self, contact: Contact, save: bool) -> None:
         self.__insertHelper(contact.firstName, contact)
         self.__insertHelper(contact.lastName, contact)
         self.__insertHelper(contact.phoneNumber, contact)
+        if save:
+            with open('contactExp.csv', 'w') as file:
+                file.write(f"{contact.lastName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
+                file.write('n')
 
     def __insertHelper(self, wordNum: string, contact: Contact) -> None:
         current = self.root

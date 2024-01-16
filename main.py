@@ -42,7 +42,9 @@ class Contact:
 
 
 contactList = []
+maxLen = 0
 def contactData() -> None:
+    global maxLen
     with open('contactsExp.csv', newline='') as file:
         reader = csv.reader(file, delimiter=',')
         for i, row in enumerate(reader):
@@ -55,7 +57,9 @@ def contactData() -> None:
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
             #contactList.append(myVars['contact{}'.format(i + 1)])
-            CB.insert(myVars['contact{}'.format(i + 1)])
+            CB.insert(myVars['contact{}'.format(i + 1)], False)
+            if len(myVars['contact{}'.format(i + 1)].toString()) > maxLen:
+                maxLen = len(myVars['contact{}'.format(i + 1)].toString())
 
 
 class ContactNode:
@@ -155,49 +159,119 @@ os.system('')
 def inputSearch():
     os.system('cls')
     go_to_X2 = "\033[G"
-    userSearch = ""
-    temp = "press enter when you find the contact your looking for: "
-    choice = "".encode('ascii')
+    user = "".encode('ascii')
+    userSearch = ''
+    while user != b'\r':
+        os.system('cls')
+        results = CB.search(userSearch)
 
-    while(choice != b'\r'):
-        if choice == b'\x08':
-            temp = temp[:-1]
+        go_to_X = f"\033[{len(results) + 3}A" + f"\033[{len(userSearch) + 3}G"
+        borderSpacing = ''
+        space1 = ''
+        space2 = ''
+        searchSpace = ''
+        resultSpace = ''
+        for i in range(maxLen):
+            borderSpacing += '═'
+
+        if maxLen % 2 != 0:
+            space2 += ' '
+        for i in range(int((maxLen - 48)/2)):
+            space1 += ' '
+            space2 += ' '
+
+        for i in range(maxLen - len(userSearch)):
+            searchSpace += ' '
+
+
+        print(f"╒═{borderSpacing}═╕\n"
+            + f"│ {space1}Input Search (press enter when contact is found){space2} │\n"
+            + f"╞═{borderSpacing}═╡\n"
+            + f"│ {userSearch}{searchSpace} │\n"
+            + f"╞═{borderSpacing}═╡")
+        for contact in results:
+            resultSpace = ""
+            if len(contact.toString()) < maxLen:
+                for i in range(maxLen - len(contact.toString())):
+                    resultSpace += ' '
+            print('│ ' + contact.toString() + f'{resultSpace} │' )
+
+        print(f"╘═{borderSpacing}═╛" + go_to_X, end='')
+        print()
+        user = (msvcrt.getch())
+
+        if user == b'\x08':
             userSearch = userSearch[:-1]
         else:
-            temp += choice.decode('ascii')
-            userSearch += choice.decode('ascii')
-        results = CB.search(userSearch)
-        print(temp)
-        hori = len(temp)
-        vert = 1
-        print(type(results))
-        for contact in results:
-            #print(type(contact))
-            #print(contact)
-            print(contact.toString())
-            vert += 1
-        go_to_X = f"\033[{vert}A" + f"\033[{hori}G"
-        print(go_to_X, end="")
+            userSearch += user.decode('ascii')
 
-        # Read one character from STD input (getch = "Get char")
-        # If you are on linux, then use getch.getch()
-        choice = (msvcrt.getch())
+    os.system('cls')
+
+
+def inputDelete():
+    os.system('cls')
+    go_to_X2 = "\033[G"
+    user = "".encode('ascii')
+    userSearch = ''
+    while user != b'\r':
         os.system('cls')
-        print(go_to_X2, end="")
+        results = CB.search(userSearch)
+
+        go_to_X = f"\033[{len(results) + 3}A" + f"\033[{len(userSearch) + 3}G"
+        borderSpacing = ''
+        space1 = ''
+        space2 = ''
+        searchSpace = ''
+        resultSpace = ''
+        for i in range(maxLen):
+            borderSpacing += '═'
+
+        if maxLen % 2 != 0:
+            space2 += ' '
+        for i in range(int((maxLen - 54)/2)):
+            space1 += ' '
+            space2 += ' '
+
+        for i in range(maxLen - len(userSearch)):
+            searchSpace += ' '
+
+
+        print(f"╒═{borderSpacing}═╕\n"
+            + f"│ {space1}Search for Contact (press enter when contact is found){space2} │\n"
+            + f"╞═{borderSpacing}═╡\n"
+            + f"│ {userSearch}{searchSpace} │\n"
+            + f"╞═{borderSpacing}═╡")
+        for contact in results:
+            resultSpace = ""
+            if len(contact.toString()) < maxLen:
+                for i in range(maxLen - len(contact.toString())):
+                    resultSpace += ' '
+            print('│ ' + contact.toString() + f'{resultSpace} │' )
+
+        print(f"╘═{borderSpacing}═╛" + go_to_X, end='')
+        print()
+        user = (msvcrt.getch())
+
+        if user == b'\x08':
+            userSearch = userSearch[:-1]
+        else:
+            userSearch += user.decode('ascii')
+
     os.system('cls')
 
 def userInput():
+    global maxLen
     user = b'X'
     FIRSTNAME = ""
     LASTNAME = ""
     PHONENUMBER = ""
     ADDRESS = ""
     while user != b'5':
-        go_to_X = f"\033[A" + f"\033[74G"
+        go_to_X = "\033[A" + "\033[74G"
         go_to_X2 = "\033[6A \033[G"
 
         print("╒══════════════════════════════════════════════════════════════════════════╕\n"
-            + "│                                     Insert                               │\n"
+            + "│                                   Insert                                 │\n"
             + "╞══════════════╤═══════════════╤══════════════════╤═════════════╤══════════╡\n"
             + "│1 - First Name│ 2 - Last Name │ 3 - Phone Number │ 4 - Address │ 5 - Exit │\n"
             + "╞══════════════╧═══════════════╧══════════════════╧═════════════╧══════╤═══╡\n"
@@ -218,6 +292,74 @@ def userInput():
         if user == b'4':
             ADDRESS = inputAddress()
 
+    os.system('cls')
+    #initializing all varibles needed for the confimation code
+    tempContact = Contact(FIRSTNAME, LASTNAME, PHONENUMBER, ADDRESS)
+    length = len(tempContact.toString())
+    spaceBorder = '═'
+    spaceBorder2 = '═'
+    spaceBorder3 = '═'
+    spaces = ' '
+    spaces2 = ' '
+    spaces3 = ' '
+    contactSpacing = ' '
+    vert = 74
+    #testing for the length of the printed comment
+    if length >= 73:
+        vert = length + 2
+        diff = length - 74
+        for i in range(diff):
+            spaceBorder += '═'
+            spaces3 += ' '
+
+        if diff % 2 == 0:
+            diff = int(diff/2)
+        else:
+            diff = int(diff/2)
+            spaces2 += ' '
+            spaceBorder3 += '═'
+
+        for i in range(diff):
+            spaces += ' '
+            spaces2 += ' '
+            spaceBorder2 += '═'
+            spaceBorder3 += '═'
+        #spacing was just off just a little bit, the code below fixes that
+        spaceBorder += '══'
+        spaceBorder2 += '═'
+        spaceBorder3 += '═'
+        spaces += ' '
+        spaces2 += ' '
+        spaces3 += '  '
+    else:
+        diff = 72 - length
+        for i in range(diff):
+            contactSpacing += ' '
+    user2 = b'X'
+    while user2 != b'1':
+        go_to_X = f"\033[A" + f"\033[{vert}G"
+        go_to_X2 = "\033[6A \033[G"
+
+        print(f"╒══{spaceBorder}═══════════════════════════════════════════════════════════════════════╕\n"
+            + f"│          {spaces}                 Confirm the contact     {spaces2}                     │\n"
+             +f"╞══{spaceBorder}═══════════════════════════════════════════════════════════════════════╡\n"
+             +f"│ {tempContact.toString()}{contactSpacing}│\n"
+            + f"╞══{spaceBorder2}════════════════════════════════════╤══{spaceBorder3}═══════════════════════════════╡\n"
+            + f"│1 - Yes {spaces}                              │ 2 - No {spaces2}                         │\n"
+            + f"╞══{spaceBorder2}════════════════════════════════════╧══{spaceBorder3}═══════════════════════════╤═══╡\n"
+            + f"│ Enter your choice here --> {spaces3}                                         │ {user2.decode('ascii')} │\n"
+            + f"╘══{spaceBorder}═══════════════════════════════════════════════════════════════════╧═══╛" + go_to_X, end="")
+
+        user2 = (msvcrt.getche())
+        print(go_to_X2, end="")
+        if(user2 == b'2'):
+            break
+        if(user2 == b'1'):
+            #saves the inserted contact
+            if len(tempContact) > maxLen:
+                maxLen = len(tempContact)
+            CB.insert(tempContact, True)
+    os.system('cls')
 
 def firstName():
     os.system('cls')
@@ -347,5 +489,13 @@ def main():
             userInput()
             os.system('cls')
 
+        if user == b'2':
+            inputDelete()
+
+        if user == b'3':
+            inputSearch()
+
 CB = ContactBook()
+contactData()
 main()
+os.system('cls')

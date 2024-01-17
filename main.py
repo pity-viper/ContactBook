@@ -257,6 +257,27 @@ def inputDelete():
         else:
             userSearch += user.decode('ascii')
 
+    user = b'X'
+    while user == b'X':
+
+
+        print(f"╒═{borderSpacing}═╕\n"
+              + f"│ {space1}Search for Contact (press enter when contact is found){space2} │\n"
+              + f"╞═{borderSpacing}═╡\n"
+              + f"│ {userSearch}{searchSpace} │\n"
+              + f"╞═{borderSpacing}═╡")
+        for contact in results:
+            resultSpace = ""
+            if len(contact.toString()) < maxLen:
+                for i in range(maxLen - len(contact.toString())):
+                    resultSpace += ' '
+            print('│ ' + contact.toString() + f'{resultSpace} │')
+
+        print(f"╘═{borderSpacing}═╛" + go_to_X, end='')
+        print()
+        user = (msvcrt.getch())
+
+
     os.system('cls')
 
 def userInput():
@@ -491,9 +512,11 @@ def main():
 
         if user == b'2':
             inputDelete()
+            os.system('cls')
 
         if user == b'3':
             inputSearch()
+            os.system('cls')
 
 CB = ContactBook()
 contactData()

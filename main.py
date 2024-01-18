@@ -7,13 +7,14 @@ import time
 
 
 class Contact:
-    def __init__(self, firstN, lastN, phoneN, address = ""):
+    def __init__(self, firstN, lastN="null", phoneN="null", address="null"):
         self.firstName = firstN.lower()
         self.lastName = lastN.lower()
-        self.phoneNumber = re.findall("\d", phoneN)
+        if phoneN != "null":
+            self.phoneNumber = re.findall("\d", phoneN)
+        else:
+            self.phoneNumber = phoneN
         self.address = address
-
-
 
     def toString(self) -> string:
         tempNum = list(self.phoneNumber)
@@ -25,19 +26,18 @@ class Contact:
         second = "".join(str(element) for element in tempNum[3:6])
         third = "".join(str(element) for element in tempNum[6:10])
 
-        if(countryCode == ""):
+        if (countryCode == ""):
             countryCode = "1"
-
-        #num = ("+" + countryCode + "(" + first + ") " + second + "-" + third)
-        num = f"+{countryCode}({first}) {second}-{third}"
+        if self.phoneNumber != "null":
+            num = f"+{countryCode}({first}) {second}-{third}"
+        else:
+            num = self.phoneNumber
 
         fName = self.firstName.capitalize()
         lName = self.lastName.capitalize()
         if self.address == "":
-            #return (self.firstName + " " + self.lastName + ", " + num)
             return f"{fName} {lName}, {num}"
         else:
-            #return (self.firstName + " " + self.lastName + ", " + num + ", Address: " + self.address)
             return f"{fName} {lName}, {num}, Address: {self.address}"
 
 
@@ -51,8 +51,6 @@ def contactData() -> None:
             tempName = row[0].split("  ")
             tempFname = tempName[1]
             tempLname = tempName[0]
-            if tempLname == "null":
-                tempLname = ""
             myStr = 'contact{}'.format(i + 1)
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
@@ -91,15 +89,13 @@ class ContactBook:
 
     def insert(self, contact: Contact, save: bool) -> None:
         self.__insertHelper(contact.firstName, contact)
-        self.__insertHelper(contact.lastName, contact)
-        self.__insertHelper(contact.phoneNumber, contact)
+        if contact.lastName != "null":
+            self.__insertHelper(contact.lastName, contact)
+        if contact.phoneNumber != "null":
+            self.__insertHelper(contact.phoneNumber, contact)
         if save:
-            if contact.lastName == "":
-                lName = "null"
-            else:
-                lName = contact.lastName
             with open('contactExp.csv', 'w') as file:
-                file.write(f"{lName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
+                file.write(f"{contact.lastName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
                 file.write('n')
 
     def __insertHelper(self, wordNum: string, contact: Contact) -> None:
@@ -137,8 +133,10 @@ class ContactBook:
 
     def delete(self, contact: Contact) -> None:
         self.__deleteHelper(contact.firstName, contact)
-        self.__deleteHelper(contact.lastName, contact)
-        self.__deleteHelper(contact.phoneNumber, contact)
+        if contact.lastName != "null":
+            self.__deleteHelper(contact.lastName, contact)
+        if contact.phoneNumber != "null":
+            self.__deleteHelper(contact.phoneNumber, contact)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
         current = self.root

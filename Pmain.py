@@ -121,8 +121,10 @@ class ContactBook:
 
     def delete(self, contact: Contact) -> None:
         self.__deleteHelper(contact.firstName, contact)
-        self.__deleteHelper(contact.lastName, contact)
-        self.__deleteHelper(contact.phoneNumber, contact)
+        if contact.lastName != "null":
+            self.__deleteHelper(contact.lastName, contact)
+        if contact.phoneNumber != "null":
+            self.__deleteHelper(contact.phoneNumber, contact)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
         current = self.root

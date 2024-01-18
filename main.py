@@ -3,7 +3,7 @@ import csv
 import re
 import os
 import msvcrt
-
+import time
 
 
 class Contact:
@@ -209,6 +209,7 @@ def inputSearch():
 
 
 def inputDelete():
+    global maxLen
     os.system('cls')
     go_to_X2 = "\033[G"
     user = "".encode('ascii')
@@ -216,8 +217,8 @@ def inputDelete():
     while user != b'\r':
         os.system('cls')
         results = CB.search(userSearch)
-
-        go_to_X = f"\033[{len(results) + 3}A" + f"\033[{len(userSearch) + 3}G"
+        length = len(userSearch) + 3
+        go_to_X = f"\033[{len(results) + 3}A" + f"\033[{length}G"
         borderSpacing = ''
         space1 = ''
         space2 = ''
@@ -257,25 +258,55 @@ def inputDelete():
         else:
             userSearch += user.decode('ascii')
 
+    maxLen += 4
+    os.system('cls')
     user = b'X'
+    space1 = ''
+    space2 = ''
+    borderSpacing = ''
+    searchSpace = ''
+
+    for i in range(maxLen):
+        borderSpacing += '═'
+
+    for i in range(int((maxLen - 43) / 2)):
+        space1 += ' '
+        space2 += ' '
+    for i in range((maxLen - 31) + 2):
+        searchSpace += ' '
+
+    borderSpacing2 = borderSpacing
+    borderSpacing2 = borderSpacing2[:-3]
     while user == b'X':
 
 
         print(f"╒═{borderSpacing}═╕\n"
-              + f"│ {space1}Search for Contact (press enter when contact is found){space2} │\n"
-              + f"╞═{borderSpacing}═╡\n"
-              + f"│ {userSearch}{searchSpace} │\n"
-              + f"╞═{borderSpacing}═╡")
-        for contact in results:
+            + f"│ {space1}Select the contact you would like to delete{space2} │\n"
+            + f"╞═{borderSpacing2}╤═══╡\n"
+            + f"│ Enter your choice here -->{searchSpace}│ {user.decode('ascii')} │\n"
+            + f"╞═{borderSpacing2}╧═══╡")
+
+
+        for i, contact in enumerate(results):
             resultSpace = ""
             if len(contact.toString()) < maxLen:
-                for i in range(maxLen - len(contact.toString())):
+                for j in range(maxLen - (len(contact.toString()) + 4)):
                     resultSpace += ' '
-            print('│ ' + contact.toString() + f'{resultSpace} │')
-
+            print(f'│ ({i}) ' + contact.toString() + f'{resultSpace} │')
         print(f"╘═{borderSpacing}═╛" + go_to_X, end='')
         print()
         user = (msvcrt.getch())
+        try:
+            CB.delete(results[int(user.decode('ascii'))])
+        except:
+            user = b'X'
+
+    os.system('cls')
+    print("╒═══════════════════════════════════════╕\n"
+        + "│               Deleted                 │\n"
+        + "╘═══════════════════════════════════════╛")
+    time.sleep(2)
+
 
 
     os.system('cls')
@@ -377,7 +408,7 @@ def userInput():
             break
         if(user2 == b'1'):
             #saves the inserted contact
-            if len(tempContact) > maxLen:
+            if len(tempContact.toString()) > maxLen:
                 maxLen = len(tempContact)
             CB.insert(tempContact, True)
     os.system('cls')

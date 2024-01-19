@@ -4,6 +4,7 @@ import re
 import os
 import msvcrt
 import time
+from csv import writer
 
 
 class Contact:
@@ -94,9 +95,11 @@ class ContactBook:
         if contact.phoneNumber != "null":
             self.__insertHelper(contact.phoneNumber, contact)
         if save:
-            with open('contactExp.csv', 'w') as file:
-                file.write(f"{contact.lastName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
-                file.write('n')
+            tempList = [f"{contact.lastName}  {contact.firstName}", ''.join(contact.phoneNumber), contact.address]
+            with open('contactsExp.csv', 'a') as f_object:
+                writer_object = writer(f_object, delimiter=",", quotechar="\"", quoting=csv.QUOTE_MINIMAL, lineterminator="\r")
+                writer_object.writerow(tempList)
+                f_object.close()
 
     def __insertHelper(self, wordNum: string, contact: Contact) -> None:
         current = self.root
@@ -312,10 +315,10 @@ def inputDelete():
 def userInput():
     global maxLen
     user = b'X'
-    FIRSTNAME = ""
-    LASTNAME = ""
-    PHONENUMBER = ""
-    ADDRESS = ""
+    FIRSTNAME = "null"
+    LASTNAME = "null"
+    PHONENUMBER = "null"
+    ADDRESS = "null"
     while user != b'5':
         go_to_X = "\033[A" + "\033[74G"
         go_to_X2 = "\033[6A \033[G"
@@ -546,6 +549,7 @@ def main():
         if user == b'3':
             inputSearch()
             os.system('cls')
+
 
 CB = ContactBook()
 contactData()

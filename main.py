@@ -18,16 +18,17 @@ class Contact:
         self.address = address
 
     def toString(self) -> string:
-        tempNum = list(self.phoneNumber)
-        countryCode = ""
-        while len(tempNum) > 10:
-            countryCode += tempNum.pop(0)
+        if self.phoneNumber != "null":
+            tempNum = list(self.phoneNumber)
+            countryCode = ""
+            while len(tempNum) > 10:
+                countryCode += tempNum.pop(0)
 
-        first = "".join(str(element) for element in tempNum[0:3])
-        second = "".join(str(element) for element in tempNum[3:6])
-        third = "".join(str(element) for element in tempNum[6:10])
+            first = "".join(str(element) for element in tempNum[0:3])
+            second = "".join(str(element) for element in tempNum[3:6])
+            third = "".join(str(element) for element in tempNum[6:10])
 
-        if (countryCode == ""):
+        if countryCode == "" and self.phoneNumber != "null":
             countryCode = "1"
         if self.phoneNumber != "null":
             num = f"+{countryCode}({first}) {second}-{third}"
@@ -36,10 +37,27 @@ class Contact:
 
         fName = self.firstName.capitalize()
         lName = self.lastName.capitalize()
-        if self.address == "":
-            return f"{fName} {lName}, {num}"
+
+        if fName == 'null':
+            fName = ''
+
+        if lName == 'null':
+            lName = ''
+            fName += ","
         else:
-            return f"{fName} {lName}, {num}, Address: {self.address}"
+            lName += ","
+
+        if num == 'null':
+            num = ''
+
+        if self.address == 'null':
+            address = ''
+        else:
+            address = self.address
+            if num != 'null':
+                num += ","
+
+        return f"{fName} {lName} {num} {address}"
 
 
 contactList = []
@@ -282,7 +300,7 @@ def inputDelete():
 
 
         print(f"╒═{borderSpacing}═╕\n"
-            + f"│ {space1}Select the contact you would like to delete{space2} │\n"
+            + f"│ {space1}Select the contact you would like to delete {space2} │\n"
             + f"╞═{borderSpacing2}╤═══╡\n"
             + f"│ Enter your choice here -->{searchSpace}│ {user.decode('ascii')} │\n"
             + f"╞═{borderSpacing2}╧═══╡")

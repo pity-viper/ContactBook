@@ -18,14 +18,13 @@ class Contact:
             self.phoneNumber = phoneN
         self.address = address
 
-    """
-    Displays the contact object depeding on the information given to the object
-
-    Returns: 
-    	String: returns a string containing all of the information stored in the object
-
-    """
     def toString(self) -> string:
+        """
+        Displays the contact object depending on the information given to the object
+
+        Returns:
+            String: returns a string containing all the information stored in the object's attributes
+        """
         if self.phoneNumber != "null":
             tempNum = list(self.phoneNumber)
             countryCode = ""
@@ -36,9 +35,9 @@ class Contact:
             second = "".join(str(element) for element in tempNum[3:6])
             third = "".join(str(element) for element in tempNum[6:10])
 
-        if countryCode == "" and self.phoneNumber != "null":
-            countryCode = "1"
-        if self.phoneNumber != "null":
+            if countryCode == "":
+                countryCode = "1"
+
             num = f"+{countryCode}({first}) {second}-{third}"
         else:
             num = self.phoneNumber
@@ -68,16 +67,18 @@ class Contact:
         return f"{fName} {lName} {num} {address}"
 
 
-contactList = []
 maxLen = 0
-"""
-Pulls information stored in the ContactsExp csv file and turns each row into a contact object and inserts the object into the trie
 
-"""
+
 def contactData() -> None:
+    """
+    Pulls information stored in the ContactsExp csv file, turns each row into a Contact object,
+    and inserts the object into the trie
+    """
     global maxLen
     with open('contactsExp.csv', newline='') as file:
         reader = csv.reader(file, delimiter=',')
+        header = next(reader)
         for i, row in enumerate(reader):
             tempName = row[0].split("  ")
             tempFname = tempName[1]
@@ -85,7 +86,6 @@ def contactData() -> None:
             myStr = 'contact{}'.format(i + 1)
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
-            #contactList.append(myVars['contact{}'.format(i + 1)])
             CB.insert(myVars['contact{}'.format(i + 1)], False)
             if len(myVars['contact{}'.format(i + 1)].toString()) > maxLen:
                 maxLen = len(myVars['contact{}'.format(i + 1)].toString())
@@ -188,11 +188,11 @@ class ContactBook:
 
 os.system('')
 
-"""
-Text based gui to take in user search term and output results in real time
 
-"""
 def inputSearch():
+    """
+    Text based GUI that takes in user search terms and outputs results in real time
+    """
     os.system('cls')
     go_to_X2 = "\033[G"
     user = "".encode('ascii')
@@ -243,12 +243,11 @@ def inputSearch():
 
     os.system('cls')
 
-"""
-Using the same methdology as the search method, this program allows the user to delete a contact
 
-
-"""
 def inputDelete():
+    """
+    Using the same methodology as the search method, this program allows the user to delete a contact
+    """
     global maxLen
     os.system('cls')
     go_to_X2 = "\033[G"
@@ -390,7 +389,8 @@ def userInput():
             ADDRESS = inputAddress()
 
     os.system('cls')
-    #initializing all varibles needed for the confimation code
+
+    # Initializing all variables needed for the confirmation code
     tempContact = Contact(FIRSTNAME, LASTNAME, PHONENUMBER, ADDRESS)
     length = len(tempContact.toString())
     spaceBorder = '═'
@@ -401,7 +401,8 @@ def userInput():
     spaces3 = ' '
     contactSpacing = ' '
     vert = 74
-    #testing for the length of the printed comment
+
+    # Testing for the length of the printed comment
     if length >= 73:
         vert = length + 2
         diff = length - 74
@@ -458,14 +459,14 @@ def userInput():
             CB.insert(tempContact, True)
     os.system('cls')
 
-"""
-Takes user input for a new contacts first name.
 
-returns:
-	String: The contacts first name
-
-"""
 def firstName():
+    """
+    Takes user input for a new contact's first name.
+
+    returns:
+        String: The contact's first name
+    """
     os.system('cls')
     hori = 3
     name = ''
@@ -493,14 +494,13 @@ def firstName():
     return name
 
 
-"""
-Takes user input for a new contacts last name.
-
-returns:
-	String: The contacts last name
-
-"""
 def lastName():
+    """
+    Takes user input for a new contact's last name.
+
+    returns:
+        String: The contact's last name
+    """
     os.system('cls')
     hori = 3
     name = ''
@@ -528,14 +528,13 @@ def lastName():
     return name
 
 
-"""
-Takes user input for a new contacts phone number.
-
-returns:
-	String: The contacts phone number
-
-"""
 def phoneNumber():
+    """
+    Takes user input for a new contact's phone number.
+
+    returns:
+        String: The contact's phone number
+    """
     os.system('cls')
     hori = 3
     number = ''
@@ -562,14 +561,14 @@ def phoneNumber():
         print(go_to_X2, end="")
     return number
 
-"""
-Takes user input for a new contacts address.
 
-returns:
-	String: The contacts address
-
-"""
 def inputAddress():
+    """
+    Takes user input for a new contact's address.
+
+    returns:
+        String: The contact's address
+    """
     os.system('cls')
     hori = 3
     address = ''
@@ -597,11 +596,10 @@ def inputAddress():
     return address
 
 
-""" 
-This is the method that calls all of the other methods. It contains the main menu.
-
-"""
 def main():
+    """
+    Calls all the other methods. It contains the main menu.
+    """
     os.system('cls')
     user = b'X'
     while user != b'4':

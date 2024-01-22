@@ -5,6 +5,7 @@ import os
 import msvcrt
 import time
 from csv import writer
+import pandas as pd
 
 
 class Contact:
@@ -169,6 +170,8 @@ class ContactBook:
             self.__deleteHelper(contact.lastName, contact)
         if contact.phoneNumber != "null":
             self.__deleteHelper(contact.phoneNumber, contact)
+        data = pd.read_csv("contactsExp.csv", index_col="Name")
+        data = data[(data["Name"] != f"{contact.lastName}  {contact.firstName}") & (data["Phone Number"] != "".join(contact.phoneNumber)) & (data["Address"] != contact.address)]
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
         current = self.root

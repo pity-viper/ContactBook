@@ -17,6 +17,13 @@ class Contact:
             self.phoneNumber = phoneN
         self.address = address
 
+    """
+    Displays the contact object depeding on the information given to the object
+
+    Returns: 
+    	String: returns a string containing all of the information stored in the object
+
+    """
     def toString(self) -> string:
         if self.phoneNumber != "null":
             tempNum = list(self.phoneNumber)
@@ -62,6 +69,10 @@ class Contact:
 
 contactList = []
 maxLen = 0
+"""
+Pulls information stored in the ContactsExp csv file and turns each row into a contact object and inserts the object into the trie
+
+"""
 def contactData() -> None:
     global maxLen
     with open('contactsExp.csv', newline='') as file:
@@ -174,7 +185,10 @@ class ContactBook:
 
 os.system('')
 
+"""
+Text based gui to take in user search term and output results in real time
 
+"""
 def inputSearch():
     os.system('cls')
     go_to_X2 = "\033[G"
@@ -226,7 +240,11 @@ def inputSearch():
 
     os.system('cls')
 
+"""
+Using the same methdology as the search method, this program allows the user to delete a contact
 
+
+"""
 def inputDelete():
     global maxLen
     os.system('cls')
@@ -330,6 +348,11 @@ def inputDelete():
 
     os.system('cls')
 
+"""
+GUI for the input of a contact
+
+"""
+
 def userInput():
     global maxLen
     user = b'X'
@@ -432,6 +455,13 @@ def userInput():
             CB.insert(tempContact, True)
     os.system('cls')
 
+"""
+Takes user input for a new contacts first name.
+
+returns:
+	String: The contacts first name
+
+"""
 def firstName():
     os.system('cls')
     hori = 3
@@ -459,6 +489,14 @@ def firstName():
         print(go_to_X2, end="")
     return name
 
+
+"""
+Takes user input for a new contacts last name.
+
+returns:
+	String: The contacts last name
+
+"""
 def lastName():
     os.system('cls')
     hori = 3
@@ -486,6 +524,14 @@ def lastName():
         print(go_to_X2, end="")
     return name
 
+
+"""
+Takes user input for a new contacts phone number.
+
+returns:
+	String: The contacts phone number
+
+"""
 def phoneNumber():
     os.system('cls')
     hori = 3
@@ -513,6 +559,13 @@ def phoneNumber():
         print(go_to_X2, end="")
     return number
 
+"""
+Takes user input for a new contacts address.
+
+returns:
+	String: The contacts address
+
+"""
 def inputAddress():
     os.system('cls')
     hori = 3
@@ -541,6 +594,10 @@ def inputAddress():
     return address
 
 
+""" 
+This is the method that calls all of the other methods. It contains the main menu.
+
+"""
 def main():
     os.system('cls')
     user = b'X'

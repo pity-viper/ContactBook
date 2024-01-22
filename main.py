@@ -9,6 +9,15 @@ import pandas as pd
 
 
 class Contact:
+    """
+    Stores data for a contact
+
+    Attributes:
+        firstName (string): the first name for a person's contact. Required.
+        lastName (string): the last name for a person's contact
+        phoneNumber (string): the phone number for a person's contact
+        address (string): the address for a person's contact
+    """
     def __init__(self, firstN, lastN="null", phoneN="null", address="null"):
         self.firstName = firstN.lower()
         self.lastName = lastN.lower()
@@ -119,6 +128,13 @@ class ContactBook:
         self.root = ContactNode()
 
     def insert(self, contact: Contact, save: bool) -> None:
+        """
+        Inserts given Contact into the prefix tree, and the csv file when specified
+
+        Args:
+             contact (Contact): contact to insert into the prefix tree
+             save (bool): if True then add to csv file, if False do not
+        """
         self.__insertHelper(contact.firstName, contact)
         if contact.lastName != "null":
             self.__insertHelper(contact.lastName, contact)
@@ -132,6 +148,13 @@ class ContactBook:
                 f_object.close()
 
     def __insertHelper(self, wordNum: string, contact: Contact) -> None:
+        """
+        Helper function for inserting contacts into the prefix tree
+
+        Args:
+            wordNum (string): the name or phone number to insert into the prefix tree
+            contact (Contact): contact to insert into the prefix tree
+        """
         current = self.root
         for char in wordNum:
             if not current.children.get(char):
@@ -144,6 +167,15 @@ class ContactBook:
         current.contacts.append(contact)
 
     def search(self, wordNum: string) -> list:
+        """
+        Searches for a contact in the prefix tree
+
+        Args:
+            wordNum (string): the name or phone number to search for
+
+        Returns:
+            list: all Contacts that match the given prefix
+        """
         results = []
         current = self.root
         for char in wordNum:
@@ -154,6 +186,15 @@ class ContactBook:
         return results
 
     def __getChildren(self, current: ContactNode) -> list:
+        """
+        Returns all contacts contained in the child nodes of the given node
+
+        Args:
+            current (ContactNode): the node to get all child nodes of
+
+        Returns:
+            list: list of Contacts which are stored in the child nodes of the current node
+        """
         temp = []
         if current.endWordNum:
             temp.extend(current.contacts)
@@ -165,6 +206,12 @@ class ContactBook:
         return temp
 
     def delete(self, contact: Contact) -> None:
+        """
+        Delete the given contact from the prefix tree and csv file
+
+        Args:
+            contact (Contact): the contact to delete
+        """
         self.__deleteHelper(contact.firstName, contact)
         if contact.lastName != "null":
             self.__deleteHelper(contact.lastName, contact)
@@ -172,8 +219,16 @@ class ContactBook:
             self.__deleteHelper(contact.phoneNumber, contact)
         data = pd.read_csv("contactsExp.csv", index_col="Name")
         data = data[(data["Name"] != f"{contact.lastName}  {contact.firstName}") & (data["Phone Number"] != "".join(contact.phoneNumber)) & (data["Address"] != contact.address)]
+        data.to_csv("contactsExp.csv", index=False)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
+        """
+        Helper method for delete
+
+        Args:
+            wordNum (string): the name or phone number to delete from the prefix tree
+            contact (Contact): the contact to remove from the prefix tree
+        """
         current = self.root
         for char in wordNum:
             if not current.children.get(char):
@@ -183,6 +238,12 @@ class ContactBook:
             current.contacts.remove(contact)
 
     def getContacts(self) -> list:
+        """
+        Get all the contacts in the prefix tree
+
+        Returns:
+            list: a list of all Contacts contained in the prefix tree
+        """
         return self.__getChildren(self.root)
 
 
@@ -218,7 +279,6 @@ def inputSearch():
 
         for i in range(maxLen - len(userSearch)):
             searchSpace += ' '
-
 
         print(f"╒═{borderSpacing}═╕\n"
             + f"│ {space1}Input Search (press enter when contact is found){space2} │\n"
@@ -275,7 +335,6 @@ def inputDelete():
         for i in range(maxLen - len(userSearch)):
             searchSpace += ' '
 
-
         print(f"╒═{borderSpacing}═╕\n"
             + f"│ {space1}Search for Contact (press enter when contact is found){space2} │\n"
             + f"╞═{borderSpacing}═╡\n"
@@ -318,13 +377,11 @@ def inputDelete():
     borderSpacing2 = borderSpacing2[:-3]
     while user == b'X':
 
-
         print(f"╒═{borderSpacing}═╕\n"
             + f"│ {space1}Select the contact you would like to delete {space2} │\n"
             + f"╞═{borderSpacing2}╤═══╡\n"
             + f"│ Enter your choice here -->{searchSpace}│ {user.decode('ascii')} │\n"
             + f"╞═{borderSpacing2}╧═══╡")
-
 
         for i, contact in enumerate(results):
             resultSpace = ""
@@ -346,16 +403,13 @@ def inputDelete():
         + "╘═══════════════════════════════════════╛")
     time.sleep(2)
 
-
-
     os.system('cls')
 
-"""
-GUI for the input of a contact
-
-"""
 
 def userInput():
+    """
+    GUI for the input of a contact
+    """
     global maxLen
     user = b'X'
     FIRSTNAME = "null"
@@ -422,7 +476,8 @@ def userInput():
             spaces2 += ' '
             spaceBorder2 += '═'
             spaceBorder3 += '═'
-        #spacing was just off just a little bit, the code below fixes that
+
+        # Spacing was off a little bit, the code below fixes that
         spaceBorder += '══'
         spaceBorder2 += '═'
         spaceBorder3 += '═'
@@ -453,7 +508,7 @@ def userInput():
         if(user2 == b'2'):
             break
         if(user2 == b'1'):
-            #saves the inserted contact
+            # Saves the inserted contact
             if len(tempContact.toString()) > maxLen:
                 maxLen = len(tempContact)
             CB.insert(tempContact, True)

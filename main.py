@@ -27,7 +27,7 @@ class Contact:
             self.phoneNumber = phoneN
         self.address = address
 
-    def toString(self) -> string:
+    def toString(self) -> str:
         """
         Displays the contact object depending on the information given to the object
 
@@ -217,8 +217,11 @@ class ContactBook:
             self.__deleteHelper(contact.lastName, contact)
         if contact.phoneNumber != "null":
             self.__deleteHelper(contact.phoneNumber, contact)
-        data = pd.read_csv("contactsExp.csv", index_col="Name")
-        data = data[(data["Name"] != f"{contact.lastName}  {contact.firstName}") & (data["Phone Number"] != "".join(contact.phoneNumber)) & (data["Address"] != contact.address)]
+        data = pd.read_csv("contactsExp.csv", header=None, names=["Name", "Phone Number", "Address"], sep=",")
+        contactName = f"{contact.lastName}  {contact.firstName}"
+        contactPhone = "".join(contact.phoneNumber)
+        #data = data[(data["Name"] != f"{contact.lastName}  {contact.firstName}") & (data["Phone Number"] != "".join(contact.phoneNumber)) & (data["Address"] != contact.address)]
+        data = data.loc[~((data["Name"] == contactName) & (data["Phone Number"] == contactPhone) & (data["Address"] == contact.address))]
         data.to_csv("contactsExp.csv", index=False)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
@@ -392,10 +395,10 @@ def inputDelete():
         print(f"╘═{borderSpacing}═╛" + go_to_X, end='')
         print()
         user = (msvcrt.getch())
-        try:
-            CB.delete(results[int(user.decode('ascii'))])
-        except:
-            user = b'X'
+        #try:
+        CB.delete(results[int(user.decode('ascii'))])
+        #except:
+            #user = b'X'
 
     os.system('cls')
     print("╒═══════════════════════════════════════╕\n"
@@ -439,13 +442,16 @@ def userInput():
 
         if user == b'3':
             PHONENUMBER = phoneNumber()
+
         if user == b'4':
             ADDRESS = inputAddress()
 
     os.system('cls')
 
     # Initializing all variables needed for the confirmation code
+    #print(f"first name: \'{FIRSTNAME}\'\nlast name: \'{LASTNAME}\'\nphone number: \'{PHONENUMBER}\'\naddress: \'{ADDRESS}\'")
     tempContact = Contact(FIRSTNAME, LASTNAME, PHONENUMBER, ADDRESS)
+    #print(tempContact.toString())
     length = len(tempContact.toString())
     spaceBorder = '═'
     spaceBorder2 = '═'
@@ -505,9 +511,9 @@ def userInput():
 
         user2 = (msvcrt.getche())
         print(go_to_X2, end="")
-        if(user2 == b'2'):
+        if user2 == b'2':
             break
-        if(user2 == b'1'):
+        if user2 == b'1':
             # Saves the inserted contact
             if len(tempContact.toString()) > maxLen:
                 maxLen = len(tempContact)

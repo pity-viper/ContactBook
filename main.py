@@ -141,7 +141,7 @@ class ContactBook:
         if contact.phoneNumber != "null":
             self.__insertHelper(contact.phoneNumber, contact)
         if save:
-            tempList = [f"{contact.lastName}  {contact.firstName}", ''.join(contact.phoneNumber), contact.address]
+            tempList = [f"{contact.lastName.capitalize()}  {contact.firstName.capitalize()}", ''.join(contact.phoneNumber), contact.address]
             with open('contactsExp.csv', 'a') as f_object:
                 writer_object = writer(f_object, delimiter=",", quotechar="\"", quoting=csv.QUOTE_MINIMAL, lineterminator="\r")
                 writer_object.writerow(tempList)
@@ -218,11 +218,10 @@ class ContactBook:
         if contact.phoneNumber != "null":
             self.__deleteHelper(contact.phoneNumber, contact)
         data = pd.read_csv("contactsExp.csv", header=None, names=["Name", "Phone Number", "Address"], sep=",")
-        contactName = f"{contact.lastName}  {contact.firstName}"
+        contactName = f"{contact.lastName.capitalize()}  {contact.firstName.capitalize()}"
         contactPhone = "".join(contact.phoneNumber)
-        #data = data[(data["Name"] != f"{contact.lastName}  {contact.firstName}") & (data["Phone Number"] != "".join(contact.phoneNumber)) & (data["Address"] != contact.address)]
-        data = data.loc[~((data["Name"] == contactName) & (data["Phone Number"] == contactPhone) & (data["Address"] == contact.address))]
-        data.to_csv("contactsExp.csv", index=False)
+        data = data.query("`Name` != @contactName and `Phone Number` != @contactPhone and `Address` != @contact.address")
+        data.to_csv("contactsExp.csv", index=False, header=False)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
         """

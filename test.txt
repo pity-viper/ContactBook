@@ -1,2 +1,0 @@
-This is a test of branches
-Also am testing how to do commits to branches

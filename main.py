@@ -46,7 +46,6 @@ class Contact:
 
             if countryCode == "":
                 countryCode = "1"
-
             num = f"+{countryCode}({first}) {second}-{third}"
         else:
             num = self.phoneNumber
@@ -385,6 +384,7 @@ def inputDelete():
             + f"│ Enter your choice here -->{searchSpace}│ {user.decode('ascii')} │\n"
             + f"╞═{borderSpacing2}╧═══╡")
 
+
         for i, contact in enumerate(results):
             resultSpace = ""
             if len(contact.toString()) < maxLen:
@@ -418,6 +418,7 @@ def userInput():
     LASTNAME = "null"
     PHONENUMBER = "null"
     ADDRESS = "null"
+    
     while user != b'5':
         go_to_X = "\033[A" + "\033[74G"
         go_to_X2 = "\033[6A \033[G"
@@ -447,10 +448,8 @@ def userInput():
 
     os.system('cls')
 
-    # Initializing all variables needed for the confirmation code
-    #print(f"first name: \'{FIRSTNAME}\'\nlast name: \'{LASTNAME}\'\nphone number: \'{PHONENUMBER}\'\naddress: \'{ADDRESS}\'")
+    #initializing all varibles needed for the confirmation code
     tempContact = Contact(FIRSTNAME, LASTNAME, PHONENUMBER, ADDRESS)
-    #print(tempContact.toString())
     length = len(tempContact.toString())
     spaceBorder = '═'
     spaceBorder2 = '═'

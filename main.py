@@ -4,9 +4,20 @@ import re
 import os
 import msvcrt
 import time
+from csv import writer
+import pandas as pd
 
 
 class Contact:
+    """
+    Stores data for a contact
+
+    Attributes:
+        firstName (string): the first name for a person's contact. Required.
+        lastName (string): the last name for a person's contact
+        phoneNumber (string): the phone number for a person's contact
+        address (string): the address for a person's contact
+    """
     def __init__(self, firstN, lastN="null", phoneN="null", address="null"):
         self.firstName = firstN.lower()
         self.lastName = lastN.lower()
@@ -16,37 +27,66 @@ class Contact:
             self.phoneNumber = phoneN
         self.address = address
 
-    def toString(self) -> string:
-        tempNum = list(self.phoneNumber)
-        countryCode = ""
-        while len(tempNum) > 10:
-            countryCode += tempNum.pop(0)
+    def toString(self) -> str:
+        """
+        Displays the contact object depending on the information given to the object
 
-        first = "".join(str(element) for element in tempNum[0:3])
-        second = "".join(str(element) for element in tempNum[3:6])
-        third = "".join(str(element) for element in tempNum[6:10])
-
-        if (countryCode == ""):
-            countryCode = "1"
+        Returns:
+            String: returns a string containing all the information stored in the object's attributes
+        """
         if self.phoneNumber != "null":
+            tempNum = list(self.phoneNumber)
+            countryCode = ""
+            while len(tempNum) > 10:
+                countryCode += tempNum.pop(0)
+
+            first = "".join(str(element) for element in tempNum[0:3])
+            second = "".join(str(element) for element in tempNum[3:6])
+            third = "".join(str(element) for element in tempNum[6:10])
+
+            if countryCode == "":
+                countryCode = "1"
             num = f"+{countryCode}({first}) {second}-{third}"
         else:
             num = self.phoneNumber
 
         fName = self.firstName.capitalize()
         lName = self.lastName.capitalize()
-        if self.address == "":
-            return f"{fName} {lName}, {num}"
+
+        if fName == 'null':
+            fName = ''
+
+        if lName == 'null':
+            lName = ''
+            fName += ","
         else:
-            return f"{fName} {lName}, {num}, Address: {self.address}"
+            lName += ","
+
+        if num == 'null':
+            num = ''
+
+        if self.address == 'null':
+            address = ''
+        else:
+            address = self.address
+            if num != 'null':
+                num += ","
+
+        return f"{fName} {lName} {num} {address}"
 
 
-contactList = []
 maxLen = 0
+
+
 def contactData() -> None:
+    """
+    Pulls information stored in the ContactsExp csv file, turns each row into a Contact object,
+    and inserts the object into the trie
+    """
     global maxLen
     with open('contactsExp.csv', newline='') as file:
         reader = csv.reader(file, delimiter=',')
+        header = next(reader)
         for i, row in enumerate(reader):
             tempName = row[0].split("  ")
             tempFname = tempName[1]
@@ -54,7 +94,6 @@ def contactData() -> None:
             myStr = 'contact{}'.format(i + 1)
             myVars = globals()
             myVars[myStr] = Contact(tempFname, tempLname, row[1], row[2])
-            #contactList.append(myVars['contact{}'.format(i + 1)])
             CB.insert(myVars['contact{}'.format(i + 1)], False)
             if len(myVars['contact{}'.format(i + 1)].toString()) > maxLen:
                 maxLen = len(myVars['contact{}'.format(i + 1)].toString())
@@ -88,17 +127,33 @@ class ContactBook:
         self.root = ContactNode()
 
     def insert(self, contact: Contact, save: bool) -> None:
+        """
+        Inserts given Contact into the prefix tree, and the csv file when specified
+
+        Args:
+             contact (Contact): contact to insert into the prefix tree
+             save (bool): if True then add to csv file, if False do not
+        """
         self.__insertHelper(contact.firstName, contact)
         if contact.lastName != "null":
             self.__insertHelper(contact.lastName, contact)
         if contact.phoneNumber != "null":
             self.__insertHelper(contact.phoneNumber, contact)
         if save:
-            with open('contactExp.csv', 'w') as file:
-                file.write(f"{contact.lastName}  {contact.firstName}, {contact.phoneNumber}, {contact.address}")
-                file.write('n')
+            tempList = [f"{contact.lastName.capitalize()}  {contact.firstName.capitalize()}", ''.join(contact.phoneNumber), contact.address]
+            with open('contactsExp.csv', 'a') as f_object:
+                writer_object = writer(f_object, delimiter=",", quotechar="\"", quoting=csv.QUOTE_MINIMAL, lineterminator="\r")
+                writer_object.writerow(tempList)
+                f_object.close()
 
     def __insertHelper(self, wordNum: string, contact: Contact) -> None:
+        """
+        Helper function for inserting contacts into the prefix tree
+
+        Args:
+            wordNum (string): the name or phone number to insert into the prefix tree
+            contact (Contact): contact to insert into the prefix tree
+        """
         current = self.root
         for char in wordNum:
             if not current.children.get(char):
@@ -111,6 +166,15 @@ class ContactBook:
         current.contacts.append(contact)
 
     def search(self, wordNum: string) -> list:
+        """
+        Searches for a contact in the prefix tree
+
+        Args:
+            wordNum (string): the name or phone number to search for
+
+        Returns:
+            list: all Contacts that match the given prefix
+        """
         results = []
         current = self.root
         for char in wordNum:
@@ -121,6 +185,15 @@ class ContactBook:
         return results
 
     def __getChildren(self, current: ContactNode) -> list:
+        """
+        Returns all contacts contained in the child nodes of the given node
+
+        Args:
+            current (ContactNode): the node to get all child nodes of
+
+        Returns:
+            list: list of Contacts which are stored in the child nodes of the current node
+        """
         temp = []
         if current.endWordNum:
             temp.extend(current.contacts)
@@ -132,13 +205,31 @@ class ContactBook:
         return temp
 
     def delete(self, contact: Contact) -> None:
+        """
+        Delete the given contact from the prefix tree and csv file
+
+        Args:
+            contact (Contact): the contact to delete
+        """
         self.__deleteHelper(contact.firstName, contact)
         if contact.lastName != "null":
             self.__deleteHelper(contact.lastName, contact)
         if contact.phoneNumber != "null":
             self.__deleteHelper(contact.phoneNumber, contact)
+        data = pd.read_csv("contactsExp.csv", header=None, names=["Name", "Phone Number", "Address"], sep=",")
+        contactName = f"{contact.lastName.capitalize()}  {contact.firstName.capitalize()}"
+        contactPhone = "".join(contact.phoneNumber)
+        data = data.query("`Name` != @contactName and `Phone Number` != @contactPhone and `Address` != @contact.address")
+        data.to_csv("contactsExp.csv", index=False, header=False)
 
     def __deleteHelper(self, wordNum: string, contact: Contact) -> None:
+        """
+        Helper method for delete
+
+        Args:
+            wordNum (string): the name or phone number to delete from the prefix tree
+            contact (Contact): the contact to remove from the prefix tree
+        """
         current = self.root
         for char in wordNum:
             if not current.children.get(char):
@@ -148,6 +239,12 @@ class ContactBook:
             current.contacts.remove(contact)
 
     def getContacts(self) -> list:
+        """
+        Get all the contacts in the prefix tree
+
+        Returns:
+            list: a list of all Contacts contained in the prefix tree
+        """
         return self.__getChildren(self.root)
 
 
@@ -155,6 +252,9 @@ os.system('')
 
 
 def inputSearch():
+    """
+    Text based GUI that takes in user search terms and outputs results in real time
+    """
     os.system('cls')
     go_to_X2 = "\033[G"
     user = "".encode('ascii')
@@ -181,7 +281,6 @@ def inputSearch():
         for i in range(maxLen - len(userSearch)):
             searchSpace += ' '
 
-
         print(f"╒═{borderSpacing}═╕\n"
             + f"│ {space1}Input Search (press enter when contact is found){space2} │\n"
             + f"╞═{borderSpacing}═╡\n"
@@ -207,6 +306,9 @@ def inputSearch():
 
 
 def inputDelete():
+    """
+    Using the same methodology as the search method, this program allows the user to delete a contact
+    """
     global maxLen
     os.system('cls')
     go_to_X2 = "\033[G"
@@ -233,7 +335,6 @@ def inputDelete():
 
         for i in range(maxLen - len(userSearch)):
             searchSpace += ' '
-
 
         print(f"╒═{borderSpacing}═╕\n"
             + f"│ {space1}Search for Contact (press enter when contact is found){space2} │\n"
@@ -277,9 +378,8 @@ def inputDelete():
     borderSpacing2 = borderSpacing2[:-3]
     while user == b'X':
 
-
         print(f"╒═{borderSpacing}═╕\n"
-            + f"│ {space1}Select the contact you would like to delete{space2} │\n"
+            + f"│ {space1}Select the contact you would like to delete {space2} │\n"
             + f"╞═{borderSpacing2}╤═══╡\n"
             + f"│ Enter your choice here -->{searchSpace}│ {user.decode('ascii')} │\n"
             + f"╞═{borderSpacing2}╧═══╡")
@@ -294,10 +394,10 @@ def inputDelete():
         print(f"╘═{borderSpacing}═╛" + go_to_X, end='')
         print()
         user = (msvcrt.getch())
-        try:
-            CB.delete(results[int(user.decode('ascii'))])
-        except:
-            user = b'X'
+        #try:
+        CB.delete(results[int(user.decode('ascii'))])
+        #except:
+            #user = b'X'
 
     os.system('cls')
     print("╒═══════════════════════════════════════╕\n"
@@ -305,17 +405,20 @@ def inputDelete():
         + "╘═══════════════════════════════════════╛")
     time.sleep(2)
 
-
-
     os.system('cls')
 
+
 def userInput():
+    """
+    GUI for the input of a contact
+    """
     global maxLen
     user = b'X'
-    FIRSTNAME = ""
-    LASTNAME = ""
-    PHONENUMBER = ""
-    ADDRESS = ""
+    FIRSTNAME = "null"
+    LASTNAME = "null"
+    PHONENUMBER = "null"
+    ADDRESS = "null"
+    
     while user != b'5':
         go_to_X = "\033[A" + "\033[74G"
         go_to_X2 = "\033[6A \033[G"
@@ -339,11 +442,13 @@ def userInput():
 
         if user == b'3':
             PHONENUMBER = phoneNumber()
+
         if user == b'4':
             ADDRESS = inputAddress()
 
     os.system('cls')
-    #initializing all varibles needed for the confimation code
+
+    #initializing all varibles needed for the confirmation code
     tempContact = Contact(FIRSTNAME, LASTNAME, PHONENUMBER, ADDRESS)
     length = len(tempContact.toString())
     spaceBorder = '═'
@@ -354,7 +459,8 @@ def userInput():
     spaces3 = ' '
     contactSpacing = ' '
     vert = 74
-    #testing for the length of the printed comment
+
+    # Testing for the length of the printed comment
     if length >= 73:
         vert = length + 2
         diff = length - 74
@@ -374,7 +480,8 @@ def userInput():
             spaces2 += ' '
             spaceBorder2 += '═'
             spaceBorder3 += '═'
-        #spacing was just off just a little bit, the code below fixes that
+
+        # Spacing was off a little bit, the code below fixes that
         spaceBorder += '══'
         spaceBorder2 += '═'
         spaceBorder3 += '═'
@@ -402,16 +509,23 @@ def userInput():
 
         user2 = (msvcrt.getche())
         print(go_to_X2, end="")
-        if(user2 == b'2'):
+        if user2 == b'2':
             break
-        if(user2 == b'1'):
-            #saves the inserted contact
+        if user2 == b'1':
+            # Saves the inserted contact
             if len(tempContact.toString()) > maxLen:
                 maxLen = len(tempContact)
             CB.insert(tempContact, True)
     os.system('cls')
 
+
 def firstName():
+    """
+    Takes user input for a new contact's first name.
+
+    returns:
+        String: The contact's first name
+    """
     os.system('cls')
     hori = 3
     name = ''
@@ -438,7 +552,14 @@ def firstName():
         print(go_to_X2, end="")
     return name
 
+
 def lastName():
+    """
+    Takes user input for a new contact's last name.
+
+    returns:
+        String: The contact's last name
+    """
     os.system('cls')
     hori = 3
     name = ''
@@ -465,7 +586,14 @@ def lastName():
         print(go_to_X2, end="")
     return name
 
+
 def phoneNumber():
+    """
+    Takes user input for a new contact's phone number.
+
+    returns:
+        String: The contact's phone number
+    """
     os.system('cls')
     hori = 3
     number = ''
@@ -492,7 +620,14 @@ def phoneNumber():
         print(go_to_X2, end="")
     return number
 
+
 def inputAddress():
+    """
+    Takes user input for a new contact's address.
+
+    returns:
+        String: The contact's address
+    """
     os.system('cls')
     hori = 3
     address = ''
@@ -521,6 +656,9 @@ def inputAddress():
 
 
 def main():
+    """
+    Calls all the other methods. It contains the main menu.
+    """
     os.system('cls')
     user = b'X'
     while user != b'4':
@@ -546,6 +684,7 @@ def main():
         if user == b'3':
             inputSearch()
             os.system('cls')
+
 
 CB = ContactBook()
 contactData()
